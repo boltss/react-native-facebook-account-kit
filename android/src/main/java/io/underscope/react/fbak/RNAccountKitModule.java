@@ -3,6 +3,7 @@ package io.underscope.react.fbak;
 import android.app.Activity;
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -17,6 +18,8 @@ import com.facebook.accountkit.AccountKitLoginResult;
 import com.facebook.accountkit.ui.AccountKitActivity;
 import com.facebook.accountkit.ui.AccountKitConfiguration;
 import com.facebook.accountkit.ui.LoginType;
+import com.facebook.accountkit.ui.ThemeUIManager;
+import com.facebook.accountkit.ui.UIManager;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
@@ -110,6 +113,17 @@ public class RNAccountKitModule extends ReactContextBaseJavaModule implements Ac
         final Intent intent = new Intent(this.reactContext.getApplicationContext(), AccountKitActivity.class);
         final AccountKitConfiguration.AccountKitConfigurationBuilder configurationBuilder =
                 createAccountKitConfiguration(loginType);
+
+        try {
+            final ApplicationInfo applicationInfo = reactContext.getPackageManager().getApplicationInfo(reactContext.getPackageName(), PackageManager.GET_META_DATA);
+            final Bundle bundle = applicationInfo.metaData;
+            final int themeId = bundle.getInt("com.facebook.accountkit.theme");
+            final UIManager uiManager = new ThemeUIManager(themeId);
+            configurationBuilder.setUIManager(uiManager);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.d("ACCOUNT_KIT", "No style resource found! Using default style.");
+        }
+
         intent.putExtra(AccountKitActivity.ACCOUNT_KIT_ACTIVITY_CONFIGURATION, configurationBuilder.build());
         this.reactContext.startActivityForResult(intent, APP_REQUEST_CODE, new Bundle());
     }
