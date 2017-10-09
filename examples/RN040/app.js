@@ -65,6 +65,9 @@ class AccountKitSample extends Component {
       //countryWhitelist: [ "AR", "BR", "US" ],
       //countryBlacklist: [ "BR" ],
       //defaultCountry: "AR"
+      initialEmail: 'example.com',
+      initialPhoneCountryPrefix: '+355',
+      initialPhoneNumber: '123-456-7890',
     })
   }
 
@@ -141,7 +144,7 @@ class AccountKitSample extends Component {
   render() {
     return (
       <View style={styles.container}>
-        { this.state.loggedAccount ? this.renderUserLogged() : this.renderLogin() }
+        {this.state.loggedAccount ? this.renderUserLogged() : this.renderLogin()}
       </View>
     )
   }

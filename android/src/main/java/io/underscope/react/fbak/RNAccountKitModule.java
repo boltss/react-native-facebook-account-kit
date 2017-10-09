@@ -15,6 +15,7 @@ import com.facebook.accountkit.AccountKit;
 import com.facebook.accountkit.AccountKitCallback;
 import com.facebook.accountkit.AccountKitError;
 import com.facebook.accountkit.AccountKitLoginResult;
+import com.facebook.accountkit.PhoneNumber;
 import com.facebook.accountkit.ui.AccountKitActivity;
 import com.facebook.accountkit.ui.AccountKitConfiguration;
 import com.facebook.accountkit.ui.LoginType;
@@ -164,7 +165,7 @@ public class RNAccountKitModule extends ReactContextBaseJavaModule implements Ac
 
                 map.putString("id", account.getId());
                 map.putString("email", account.getEmail());
-                
+
                 WritableMap phoneNumber = null;
                 if (account.getPhoneNumber() != null) {
                     phoneNumber = Arguments.createMap();
@@ -172,7 +173,7 @@ public class RNAccountKitModule extends ReactContextBaseJavaModule implements Ac
                     phoneNumber.putString("countryCode", account.getPhoneNumber().getCountryCode());
                 }
                 map.putMap("phoneNumber", phoneNumber);
-                
+
                 promise.resolve(map);
             }
 
@@ -228,6 +229,13 @@ public class RNAccountKitModule extends ReactContextBaseJavaModule implements Ac
         String initialEmail = this.options.getString("initialEmail");
         if (initialEmail != null && !initialEmail.isEmpty()) {
             configurationBuilder.setInitialEmail(initialEmail);
+        }
+
+        String initialPhoneCountryPrefix = this.options.getString("initialPhoneCountryPrefix");
+        String initialPhoneNumber = this.options.getString("initialPhoneNumber");
+        if (initialPhoneCountryPrefix != null && !initialPhoneCountryPrefix.isEmpty() && initialPhoneNumber != null && !initialPhoneNumber.isEmpty()) {
+            PhoneNumber phoneNumber = new PhoneNumber(initialPhoneCountryPrefix, initialPhoneNumber, null);
+            configurationBuilder.setInitialPhoneNumber(phoneNumber);
         }
 
         configurationBuilder.setFacebookNotificationsEnabled(
@@ -303,7 +311,7 @@ public class RNAccountKitModule extends ReactContextBaseJavaModule implements Ac
         String[] out = new String[pre.size()];
         return pre.toArray(out);
     }
-    
+
     public void onNewIntent(Intent intent) {
-    }    
+    }
 }
